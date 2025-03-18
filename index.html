@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>角色对战游戏</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="battle-area">
+        <div class="ai-character">
+          <div class="character-info">
+            <div class="hp-bar">
+              <div class="hp-fill"></div>
+              <span class="hp-text">10/10</span>
+            </div>
+            <div class="mp-bar">
+              <div class="mp-fill"></div>
+              <span class="mp-text">10/10</span>
+            </div>
+          </div>
+          <div class="character-sprite ai-sprite"></div>
+        </div>
+
+        <div class="distance-indicator">
+          <span class="distance-value">5</span>
+          <div class="distance-bar"></div>
+        </div>
+
+        <div class="player-character">
+          <div class="character-sprite player-sprite"></div>
+          <div class="character-info">
+            <div class="hp-bar">
+              <div class="hp-fill"></div>
+              <span class="hp-text">10/10</span>
+            </div>
+            <div class="mp-bar">
+              <div class="mp-fill"></div>
+              <span class="mp-text">10/10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="battle-log">
+        <div class="log-content"></div>
+      </div>
+
+      <div class="skill-selection">
+        <h3>选择技能</h3>
+        <div class="skill-cards"></div>
+      </div>
+    </div>
+
+    <div class="battle-result">
+      <div class="result-message"></div>
+      <button class="restart-btn">再来一局</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
