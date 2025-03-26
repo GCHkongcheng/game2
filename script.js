@@ -164,18 +164,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-     // 点击判定
-     function handleClick(event) {
+    // 点击判定
+    function handleClick(event) {
         if (isGameOver) return;
         
         // 防止连续快速点击
         const now = Date.now();
         if (now - lastKeyTime < 100) return;
+
+        // 阻止默认行为和事件冒泡
+        event.preventDefault();
         
         // 获取点击位置相对于游戏区域的坐标
         const rect = gameArea.getBoundingClientRect();
-        const clickX = event.clientX - rect.left;
-        const clickY = event.clientY - rect.top;
+        let clickX;
+        
+        // 处理触摸事件和鼠标事件
+        if (event.type === 'touchstart' || event.type === 'touchend') {
+            // 触摸事件
+            if (event.touches && event.touches.length > 0) {
+                clickX = event.touches[0].clientX - rect.left;
+            } else if (event.changedTouches && event.changedTouches.length > 0) {
+                clickX = event.changedTouches[0].clientX - rect.left;
+            } else {
+                return; // 没有有效的触摸点
+            }
+        } else {
+            // 鼠标事件
+            clickX = event.clientX - rect.left;
+        }
         
         const judgeLinePosition = judgeLine.offsetTop;
         let hitKey = false;
@@ -189,11 +206,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const keyLeft = key.left; // 使用存储的left值
             const keyRight = keyLeft + keyWidth;
             
-            // 首先检查点击是否在键上
-            const isClickOnKey = (clickX >= keyLeft && clickX <= keyRight && 
-                                 clickY >= keyTop && clickY <= keyBottom);
+            // 修改判定逻辑：只检查水平位置是否匹配，不再检查垂直位置
+            const isInKeyColumn = (clickX >= keyLeft && clickX <= keyRight);
             
-            if (!isClickOnKey) continue; // 如果没有点击到键，跳过后续判断
+            if (!isInKeyColumn) continue; // 如果不在键的竖直区域内，跳过后续判断
             
             // 判断键是否在判定线范围内
             const distance = Math.abs(judgeLinePosition - keyBottom);
@@ -232,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 如果没有击中任何键或点击太早/太晚，不做任何处理
     }
 
+
     // 游戏结束
     function endGame() {
         isGameOver = true;
@@ -241,9 +258,19 @@ document.addEventListener('DOMContentLoaded', () => {
         gameOverScreen.classList.remove('hidden');
     }
 
-        // 事件监听
-        gameArea.addEventListener('click', handleClick);
-        restartBtn.addEventListener('click', initGame);
+       // 事件监听 - 同时支持鼠标和触摸事件
+    gameArea.addEventListener('click', handleClick);
+    gameArea.addEventListener('touchstart', handleClick, { passive: false });
+    restartBtn.addEventListener('click', initGame);
+    restartBtn.addEventListener('touchstart', initGame, { passive: false });
+    
+    // 防止页面滚动
+    document.body.addEventListener('touchmove', function(e) {
+        if (e.target === gameArea || gameArea.contains(e.target)) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
     // 开始游戏
     initGame();
 });
